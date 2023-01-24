@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6,7,9_January CRUD Operation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Student's Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="myul">
+                        <li>A</li>
+                        <li>B</li>
+                        <li>C</li>
+                    </ul>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary closeModal" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form class="myForm1">
+        <input name="name" class="form-control" type="text" placeholder="Enter your name">
+        <input name="surname" class="form-control" type="text" placeholder="Enter your Surname">
+        <input name="address" class="form-control" type="text" placeholder="Enter your address"><br>
+        <input type="button" value="Save" onclick="saveData()">
+        <hr>
+    </form>
+    <div class="myError"></div>
+    <table border="1" class="myTable table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script>
+        let currentEditRow;
+        let nm = document.querySelector('input[name = "name"]');
+        let sn = document.querySelector('input[name = "surname"]');
+        let addr = document.querySelector('input[name = "address"]');
+
+        let tbdy = document.querySelector('table.myTable tbody');
+        let saveData = () => {
+            // alert("Hi");
+            // console.log(nm.value);
+            // console.log(sn.value);
+            // console.log(addr.value);
+            // console.log(tbdy)
+            if (nm.value == '' || sn.value == '' || addr.value == '') {
+                //alert('Please fill all fields');
+
+                document.querySelector('div.myError').innerHTML =
+                    `<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Please fill all fields
+                        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>`;
+
+            }
+            else {
+                tbdy.innerHTML += `<tr>
+                                <td>${nm.value}</td>
+                                <td>${sn.value}</td>
+                                <td>${addr.value}</td>
+                                <td>
+                                    <button onclick = "viewRecord(this)"  data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn btn-primary">View</button>
+                                    <button class = "btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick = editRecord(this)>Edit</button>
+                                    <button onclick = "deleteData(this)" class = "btn btn-danger">Delete</button>
+                                </td>
+                            </tr>`;
+            }
+
+            nm.value = sn.value = addr.value = '';
+        }
+        let deleteData = (elem) => {
+            // alert('Hey');
+            // console.log(elem.closest('tr'));
+            elem.closest('tr').remove();
+            confirm("Do you really want to delete record?")
+        }
+        let viewRecord = (elem) => {
+            //alert('Hello....');
+            let name = elem.closest('tr').querySelector('td:first-child').innerHTML;
+            let surname = elem.closest('tr').querySelector("td:nth-child(2)").innerHTML;
+            let address = elem.closest('tr').querySelector("td:nth-child(3)").innerHTML;
+            //console.log(name.innerHTML);
+            document.querySelector('div.modal-body ul.myul li:first-child').innerHTML = name;
+            document.querySelector('div.modal-body ul.myul li:nth-child(2)').innerHTML = surname;
+            document.querySelector('div.modal-body ul.myul li:last-child').innerHTML = address;
+        }
+        let editRecord = (elem) => {
+            //alert('DevanandVerma');
+            currentEditRow = elem.closest('tr')
+            document.querySelector('.modal-title').innerHTML = "Edit Student's Information"
+            let name = elem.closest('tr').querySelector('td:first-child').innerHTML;
+            let surname = elem.closest('tr').querySelector("td:nth-child(2)").innerHTML;
+            let address = elem.closest('tr').querySelector("td:nth-child(3)").innerHTML;
+
+            console.log(name);
+            console.log(surname);
+            console.log(address);
+            document.querySelector('div.modal-body ul.myul').innerHTML =
+                `<form class = "myEditForm">
+                <input name="name" class="form-control" type="text" value = '`+ name + `' placeholder="Enter your name">
+                <input name="surname" class="form-control" type="text" value = '`+ surname + `' placeholder="Enter your Surname">
+                <input name="address" class="form-control" type="text" value = '`+ address + `' placeholder="Enter your address">
+                <input type="button" class = "btn btn-info btn-sm" value="update" onclick = "closeEditModal(this)">
+            
+            </form>`;
+
+
+        }
+
+        let closeEditModal = (elem) => {
+            //alert("Hi");
+            console.log(elem.previousElementSibling.previousElementSibling.previousElementSibling);
+            let nme = elem.previousElementSibling.previousElementSibling.previousElementSibling.value;
+            let snme = elem.previousElementSibling.previousElementSibling.value;
+            let adr = elem.previousElementSibling.value;
+            console.log(nme);
+            console.log(snme);
+            console.log(adr);
+            //elem.closest('tr').querySelector('td:first-child').innerHTML = nme;
+            currentEditRow.querySelector('td:first-child').innerHTML = nme;
+            currentEditRow.querySelector('td:nth-child(2)').innerHTML = snme;
+            currentEditRow.querySelector('td:nth-child(3)').innerHTML = adr;
+            elem.closest('div.modal').querySelector('button.closeModal').click();
+        }
+    </script>
+</body>
+
+</html>
